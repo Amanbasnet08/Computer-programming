@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #calculator {
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            color: white;
+        }
+
+        button.add {
+            background-color: #4CAF50; /* Green */
+        }
+
+        button.subtract {
+            background-color: #f44336; /* Red */
+        }
+
+        button.multiply {
+            background-color: #ff9800; /* Orange */
+        }
+
+        button.divide {
+            background-color: #2196F3; /* Blue */
+        }
+    </style>
+</head>
+<body>
+
+<div id="calculator">
+
+    <p>Input 1: <input type="text" id="input1"> </p> 
+    <p>Input 2: <input type="text" id="input2"> </p>  
+    <p>
+        Operator: 
+        <button class="add" onclick="add()">+</button> 
+        <button class="subtract" onclick="subtract()">-</button> 
+        <button class="multiply" onclick="multiply()">*</button> 
+        <button class="divide" onclick="divide()">/</button>
+    </p> 
+    <p>Result:</p> <p id="res"></p>
+
+    <script>
+        function add(){
+            var x = parseFloat(document.getElementById("input1").value);
+            var y = parseFloat(document.getElementById("input2").value);
+            var z = x + y;
+            document.getElementById("res").innerHTML = x + " + " + y + " = " + z;
+        }
+
+        function subtract(){
+            var x = parseFloat(document.getElementById("input1").value);
+            var y = parseFloat(document.getElementById("input2").value);
+            var z = x - y;
+            document.getElementById("res").innerHTML = x + " - " + y + " = " + z;
+        }
+
+        function multiply(){
+            var x = parseFloat(document.getElementById("input1").value);
+            var y = parseFloat(document.getElementById("input2").value);
+            var z = x * y;
+            document.getElementById("res").innerHTML = x + " * " + y + " = " + z;
+        }
+
+        function divide(){
+            var x = parseFloat(document.getElementById("input1").value);
+            var y = parseFloat(document.getElementById("input2").value);
+            var z = x / y;
+            document.getElementById("res").innerHTML = x + " / " + y + " = " + z;
+        }
+    </script>
+
+</div>
+
+</body>
+</html>
