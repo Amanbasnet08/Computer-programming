@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        table {
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular',
+                         'Lucida Grande', 'Lucida Sans Unicode',
+                         Geneva, Verdana, sans-serif;
+        }
+
+        input, button {
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular',
+                         'Lucida Grande', 'Lucida Sans Unicode',
+                         Geneva, Verdana, sans-serif;
+            align: center;
+        }
+    </style>
+</head>
+<body>
+<div align="center">
+    <h1>Grade Calculator</h1>
+
+    <button onclick="addActivity()" id="addActivity">Add Activity</button>
+
+    <label for="activity">Activity</label>
+    <input type="text" id="activity" size="3">
+
+    <label for="Weight">Weight</label>
+    <input type="text" id="Weight" size="3"><br>
+
+    <button onclick="addGrade()" id="addGrade">Add Grade</button>
+
+    <label for="grade">Grade</label>
+    <input type="text" id="grade" size="3">
+
+    <label for="activityNo">Activity no</label>
+    <input type="text" id="activityNo" size="3"><br>
+
+    <button onclick="deleteTopActivity()" id="deleteTopActivity">Delete Top Activity</button>
+    <button onclick="deleteBottomActivity()" id="deleteBottomActivity">Delete Bottom Activity</button>
+    <button onclick="deleteByActivityNo()" id="deleteByActivityNo">Delete by Activity No</button>
+
+    <table border="2" id="theTable" style="width:70%">
+        <tr>
+            <th>No</th>
+            <th>Activity</th>
+            <th>Weight</th>
+            <th>Grade</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Lab1</td>
+            <td>10</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Lab2</td>
+            <td>20</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Test1</td>
+            <td>30</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Test2</td>
+            <td>40</td>
+            <td></td>
+        </tr>
+    </table>
+    <p id="ERR" style="color:red;">Error Message: </p>
+
+    <script>
+        var noActivity = 4;
+        var totalWeight = 100;
+        var ERR = document.getElementById("ERR");
+
+        function addActivity() {
+            var activity = document.getElementById("activity").value;
+            var weight = document.getElementById("Weight").value;
+
+            if (activity === "") {
+                ERR.textContent = "Error Message: Activity name is rejected.";
+                return;
+            }
+            if (weight < 1 || weight > 100) {
+                ERR.textContent = "Error Message: Weight is rejected.";
+                return;
+            }
+            noActivity++;
+            totalWeight += weight;
+
+            var table = document.getElementById("theTable").getElementsByTagName('tbody')[0];
+            var newRow = table.insertRow(-1);
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            var cell3 = newRow.insertCell(2);
+            var cell4 = newRow.insertCell(3);
+
+            cell1.innerHTML = noActivity;
+            cell2.innerHTML = activity;
+            cell3.innerHTML = weight;
+            cell4.innerHTML = "";
+
+            document.getElementById("activity").value = "";
+            document.getElementById("Weight").value = "";
+            ERR.textContent = "";
+        }
+
+        function addGrade() {
+            var grade = parseInt(document.getElementById("grade").value);
+            var activityNo = parseInt(document.getElementById("activityNo").value);
+            if (Number(grade) !== Number(grade) || grade < 0 || grade > 100) {
+                ERR.textContent = "Error Message: Grade is rejected.";
+                return;
+            }
+            if (Number(activityNo) !== Number(activityNo) || activityNo < 1 || activityNo > noActivity) {
+                ERR.textContent = "Error Message: Activity No is rejected.";
+                return;
+            }
+            var table = document.getElementById("theTable");
+            var rows = table.rows;
+              for (var i = 1; i < rows.length; i++) {
+                if (parseInt(rows[i].cells[0].innerHTML) === activityNo) { // Change this line
+                    rows[i].cells[3].innerHTML = grade;
+                    document.getElementById("grade").value = "";
+                    document.getElementById("activityNo").value = "";
+                    ERR.textContent = "";
+                    return;
+                }
+            }
+        }
+
+        function deleteTopActivity() {
+            var table = document.getElementById("theTable");
+            var rowCount = table.rows.length;
+            if (rowCount <= 1) {
+                ERR.textContent = "Error Message: No more activities to remove.";
+                return;
+            }
+            table.deleteRow(1); 
+            noActivity--;
+            ERR.textContent = "";
+        }
+
+        function deleteBottomActivity() {
+            var table = document.getElementById("theTable");
+            var rowCount = table.rows.length;
+            if (rowCount <= 1) {
+                ERR.textContent = "Error Message: No more activities to remove.";
+                return;
+            }
+            table.deleteRow(rowCount - 1); 
+            noActivity--;
+            ERR.textContent = "";
+        }
+
+        function deleteByActivityNo() {
+            var activityNo = parseInt(document.getElementById("activityNo").value);
+            if (Number(activityNo) !== Number(activityNo) || activityNo < 1 || activityNo > noActivity) {
+                ERR.textContent = "Error Message: Activity No is rejected.";
+                return;
+            }
+            var table = document.getElementById("theTable");
+            var rows = table.rows;
+            for (var i = 1; i < rows.length; i++) {
+                if (parseInt(rows[i].cells[0].innerHTML) === activityNo) {
+                    table.deleteRow(i);
+                    noActivity--;
+                    ERR.textContent = "";
+                    return;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
