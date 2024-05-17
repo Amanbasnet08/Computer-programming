@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adopt Cat - Aman Basnet Lab2</title>
+    <style>
+        body {
+            background-color: #f0f8ff; /* Light blue background */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #4b8f8c; /* Dark teal color */
+            margin-bottom: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #4b8f8c; /* Dark teal */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #3a6d6a; /* Darker teal */
+        }
+
+        label {
+            font-size: 14px;
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input[type="number"], select {
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: calc(100% - 22px);
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        .results {
+            margin-top: 20px;
+            font-size: 14px;
+            background-color: #e0f7fa; /* Light teal background */
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Aman Basnet Lab2 - Adopt Cat</h1>
+    <div class="container">
+        <div class="section">
+            <button onclick="allNames()">All Names</button>
+        </div>
+        
+        <div class="section">
+            <label for="healthIssue">Health Issues:</label>
+            <input type="number" id="healthIssue" min="1">
+            <button onclick="filterHealthIssue()">Filter</button>
+        </div>
+    
+        <div class="section">
+            <label for="weightUnit">Weight:</label>
+            <select id="weightUnit">
+                <option value="imperial">Imperial</option>
+                <option value="metric">Metric</option>
+            </select>
+            <button onclick="displayWeights()">Display Weights</button>
+        </div>
+
+        <div class="section">
+            <button onclick="displayIntelligenceFriendly()">Intelligence - Friendly</button>
+        </div>
+
+        <div class="section">
+            <button onclick="averageIntelligence()">Average Intelligence</button>
+        </div>
+
+        <div class="section">
+            <button onclick="averageIntelligenceChildFriendly()">Average Intelligence for Child Friendly</button>
+        </div>
+
+        <div id="res" class="results"></div>
+    </div>
+
+    <script>
+        function allNames() {
+            const jsonUrl = 'https://api.thecatapi.com/v1/breeds';
+            const jsonContentElement = document.getElementById('res');
+            jsonContentElement.innerHTML = "";
+            fetch(jsonUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Something went wrong.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    data.forEach(value => {
+                        const lineBreak = document.createElement('br');
+                        jsonContentElement.appendChild(document.createTextNode(value.name));
+                        jsonContentElement.appendChild(lineBreak);
+                    });
+                    const totalNames = document.createElement('div');
+                    totalNames.textContent = `Total Names: ${data.length}`;
+                    jsonContentElement.appendChild(totalNames);
+                })
+                .catch(error => {
+                    console.error('Error fetching JSON:', error);
+                });
+        }
+
+        function filterHealthIssue() {
+            const jsonUrl = 'https://api.thecatapi.com/v1/breeds';
+            const jsonContentElement = document.getElementById('res');
+            const healthIssueInput = document.getElementById('healthIssue');
+            const healthIssueNumber = parseInt(healthIssueInput.value);
+            jsonContentElement.innerHTML = "";
+            
+            fetch(jsonUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Something went wrong.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const breedsWithIssues = data.filter(breed => breed.health_issues === healthIssueNumber);
+                    const label = document.createElement('div');
+                    label.textContent = `Breeds with Health Issue # ${healthIssueNumber}:`;
+                    jsonContentElement.appendChild(label);
+                    
+                    breedsWithIssues.forEach(breed => {
+                        const lineBreak = document.createElement('br');
+                        jsonContentElement.appendChild(document.createTextNode(breed.name));
+                        jsonContentElement.appendChild(lineBreak);
+                    });
+
+                    const totalBreedsWithIssues = document.createElement('div');
+                    totalBreedsWithIssues.textContent = `Total: ${breedsWithIssues.length}`;
+                    jsonContentElement.appendChild(totalBreedsWithIssues);
+                })
+                .catch(error => {
+                    console.error('Error fetching JSON:', error);
+                });
+        }
+
+        function displayWeights() {
+            const jsonUrl = 'https://api.thecatapi.com/v1/breeds';
+            const jsonContentElement = document.getElementById('res');
+            const weightUnitSelect = document.getElementById('weightUnit');
+            const selectedUnit = weightUnitSelect.value;
+            jsonContentElement.innerHTML = "";
+            
+            fetch(jsonUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Something went wrong.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    data.forEach(value => {
+                        let weight;
+                        if (selectedUnit === 'imperial') {
+                            weight = value.weight.imperial;
+                        } else {
+                            weight = value.weight.metric;
+                        }
+                        const lineBreak = document.createElement('br');
+                        jsonContentElement.appendChild(document.createTextNode(`${value.name}: ${weight} ${selectedUnit}`));
+                        jsonContentElement.appendChild(lineBreak);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching JSON:', error);
+                });
+        }
+
+        function displayIntelligenceFriendly() {
+            const jsonUrl = 'https://api.thecatapi.com/v1/breeds';
+            const jsonContentElement = document.getElementById('res');
+            jsonContentElement.innerHTML = "";
+            
+            fetch(jsonUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Something went wrong.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    data.forEach(breed => {
+                        const lineBreak = document.createElement('br');
+                        jsonContentElement.appendChild(document.createTextNode(`I: ${breed.intelligence} - F: ${breed.child_friendly}`));
+                        jsonContentElement.appendChild(lineBreak);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching JSON:', error);
+                });
+        }
+
+        function averageIntelligence() {
+            const jsonUrl = 'https://api.thecatapi.com/v1/breeds';
+            const jsonContentElement = document.getElementById('res');
+            jsonContentElement.innerHTML = "";
+            
+            fetch(jsonUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Something went wrong.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    let totalIntelligence = 0;
+                    let totalBreeds = data.length;
+                    data.forEach(breed => {
+                        totalIntelligence += breed.intelligence;
+                    });
+                    const avgIntelligence = (totalIntelligence / totalBreeds).toFixed(2);
+                    jsonContentElement.textContent = `Average Intelligence: ${avgIntelligence}`;
+                })
+                .catch(error => {
+                    console.error('Error fetching JSON:', error);
+                });
+        }
+
+        function averageIntelligenceChildFriendly() {
+            const jsonUrl = 'https://api.thecatapi.com/v1/breeds';
+            const jsonContentElement = document.getElementById('res');
+            jsonContentElement.innerHTML = "";
+            
+            fetch(jsonUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Something went wrong.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    let totalIntelligence = 0;
+                    let totalBreeds = 0;
+                    data.forEach(breed => {
+                        if (breed.child_friendly >= 4) {
+                            totalIntelligence += breed.intelligence;
+                            totalBreeds++;
+                        }
+                    });
+                    const avgIntelligence = (totalBreeds > 0) ? (totalIntelligence / totalBreeds).toFixed(2) : "N/A";
+                    jsonContentElement.textContent = `Average Intelligence for Child Friendly: ${avgIntelligence}`;
+                })
+                .catch(error => {
+                    console.error('Error fetching JSON:', error);
+                });
+        }
+    </script>
+</body>
+</html>
