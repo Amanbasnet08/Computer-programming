@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Booking place for your dinner!</title>
+    <style>
+        .error {
+            background-color: #fba; /* Red background for errors */
+        }
+        .valid {
+            background-color: #fff; /* White background for valid inputs */
+        }
+        .message {
+            display: inline-block;
+            vertical-align: top;
+            margin-left: 10px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h2>Booking place for your dinner!</h2>
+    
+    <form onsubmit="return validateForm()">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" onblur="validateName()" oninput="enableSubmit()">
+        <span id="nameError" class="message"></span><br><br>
+
+        <label for="phone">Phone number:</label>
+        <input type="text" id="phone" name="phone" onblur="validatePhone()" oninput="enableSubmit()">
+        <span id="phoneError" class="message"></span><br><br>
+
+        <label>Select a time:</label><br>
+        <input type="radio" id="time1" name="time" value="05:00" checked> 05:00<br>
+        <input type="radio" id="time2" name="time" value="06:00"> 06:00<br>
+        <input type="radio" id="time3" name="time" value="07:00"> 07:00<br>
+        <input type="radio" id="time4" name="time" value="08:00"> 08:00<br><br>
+
+        <label>What would you like to have with us?</label><br>
+        <input type="checkbox" name="menu" value="Starters"> Starters<br>
+        <input type="checkbox" name="menu" value="Main_Course"> Main Course<br>
+        <input type="checkbox" name="menu" value="Desserts"> Desserts<br>
+        <input type="checkbox" name="menu" value="Drinks"> Drinks<br><br>
+        <input type="submit" id="submit" value="Submit" disabled>
+        <span id="formMessage" class="message"></span>
+    </form>
+
+    <script>
+        function validateName() {
+            var nameField = document.getElementById("name");
+            var name = nameField.value.trim();
+            var errorMessage = "";
+
+            if (name === "") {
+                errorMessage = "Error: Name is empty.";
+            } else if (name.split(" ").length < 2) {
+                errorMessage = "Error: First and last names are required.";
+            }
+
+            if (errorMessage) {
+                nameField.classList.add("error");
+                nameField.classList.remove("valid");
+                document.getElementById("nameError").innerText = errorMessage;
+            } else {
+                nameField.classList.remove("error");
+                nameField.classList.add("valid");
+                document.getElementById("nameError").innerText = "";
+            }
+        }
+
+        function validatePhone() {
+            var phoneField = document.getElementById("phone");
+            var phone = phoneField.value.trim();
+            var errorMessage = "";
+
+            if (phone === "") {
+                errorMessage = "Error: Phone number is empty.";
+            } else if (phone.length !== 6 || isNaN(phone) || !/^\d/.test(phone)) {
+                errorMessage = "Error: Phone number must have exactly 6 characters and start with a number.";
+            }
+
+            if (errorMessage) {
+                phoneField.classList.add("error");
+                phoneField.classList.remove("valid");
+                document.getElementById("phoneError").innerText = errorMessage;
+            } else {
+                phoneField.classList.remove("error");
+                phoneField.classList.add("valid");
+                document.getElementById("phoneError").innerText = "";
+            }
+        }
+
+        function enableSubmit() {
+            var name = document.getElementById("name").value.trim();
+            var phone = document.getElementById("phone").value.trim();
+            var submitButton = document.getElementById("submit");
+
+            if (name !== "" && phone !== "") {
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+            }
+        }
+
+        function validateForm() {
+            validateName();
+            validatePhone();
+
+            var nameError = document.getElementById("nameError").innerText;
+            var phoneError = document.getElementById("phoneError").innerText;
+
+            if (nameError === "" && phoneError === "") {
+                var name = document.getElementById("name").value.trim();
+                var phone = document.getElementById("phone").value.trim();
+                var time = document.querySelector('input[name="time"]:checked').value;
+                var menu = Array.from(document.querySelectorAll('input[name="menu"]:checked'))
+                                .map(checkbox => checkbox.value)
+                                .join(", ");
+
+                var reservationMessage = `Reservation for: ${name} Phone: ${phone} at ${time} Menu: ${menu}`;
+                document.getElementById("formMessage").innerText = reservationMessage;
+                document.getElementById("formMessage").style.color = "green";
+
+                return false; 
+            }
+
+            return false; 
+        }
+    </script>
+</body>
+</html>
